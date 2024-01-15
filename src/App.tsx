@@ -1,41 +1,73 @@
+import { useState } from "react";
 import "./App.css";
-import presentIgm from "./assets/original.jpg";
+import presentImg from "./assets/original.jpg";
 
-const presents = [
-  {
-    nest: 1,
-    children: [
-      {
-        nest: 2,
-      },
-      {
-        nest: 2,
-      },
-    ],
-  },
-  {
-    nest: 2,
-    children: [
-      {
-        nest: 2,
-      },
-      {
-        nest: 2,
-      },
-    ],
-  },
-];
-
-function OpenPresent(present: any) {
-  return <img className="present-img" src={presentIgm} />;
-}
+type Present = {
+  presents: Present[];
+  scale?: number;
+};
 
 function App() {
+  const [presents, setPresents] = useState<Present[]>([
+    {
+      presents: [
+        {
+          presents: [
+            {
+              presents: [],
+            },
+          ],
+        },
+        {
+          presents: [],
+        },
+      ],
+    },
+    {
+      presents: [
+        {
+          presents: [],
+        },
+      ],
+    },
+    {
+      presents: [],
+    },
+    {
+      presents: [],
+    },
+  ]);
   return (
     <div className="container">
-      {presents.map((present, index) => {
-        return <OpenPresent present={present} index={index} />;
-      })}
+      <div className="inner">
+        {presents.map((present, clickedIdx) => {
+          return (
+            <button
+              key={clickedIdx}
+              onClick={() => {
+                setPresents((prevPresents) => {
+                  return prevPresents.flatMap((value: any, index: number) => {
+                    if (clickedIdx === index) {
+                      return value.presents.map((currPres: Present[]) => ({
+                        ...currPres,
+                        scale: 0.8 * (present.scale ?? 0.8),
+                      }));
+                    } else {
+                      return value;
+                    }
+                  });
+                });
+              }}
+            >
+              <img
+                style={{ scale: `${present?.scale ?? 1}` }}
+                className="present-img"
+                src={presentImg}
+              />
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
